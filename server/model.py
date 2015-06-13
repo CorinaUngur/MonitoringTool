@@ -27,7 +27,7 @@ class db_manager(object):
 		data=[]
 		result = self.session.query(AgentData.data).filter_by(name=agent_name).filter(AgentData.date_time >= begining_date).all()
 		for r in result:
-			data+=[r[0]]
+			data+=[json.loads(r[0].replace("'",'"'))]
 		return data
 
 

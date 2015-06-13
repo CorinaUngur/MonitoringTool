@@ -56,11 +56,7 @@ class Connector(object):
 			tries to convert the body which comes in a json format and save it in last_message field
 			if does not suceed saves the original body received"""
 		try:
-			self.last_message=[]
-			message = json.loads(body)
-			for msg in message:
-				self.last_message += [json.loads(msg)]
-			
+			self.last_message = json.loads(body)
 		except ValueError:
 			print 'encountered an error while decoding the message'
 			self.last_message = body
