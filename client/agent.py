@@ -15,22 +15,27 @@ class Agent(object):
 		"""sends data for a time period specified by time_period
 			data is collected at a interval specified by time_interval
 			time_period, time_interval are integers that represent number of seconds"""
-
-		data = {}
 		current_time = 0
 		self.begining_date = datetime.now().strftime('%Y-%b-%d %I:%M:%S')
 
-		while(current_time<=time_period):
-			free_space = self.w.Win32_LogicalDisk()[0].FreeSpace
-			cpu_load = self.w.Win32_Processor()[0].LoadPercentage
-
-			data['free_space'] = free_space
-			data['cpu_load'] = cpu_load
-
+		while(current_time<time_period):
+			
+			data = self.__get_current_data__()
 			self.connector.send_data(self.name, data)
 
 			time.sleep(time_interval)
 			current_time += time_interval
+
+	def __get_current_data__(self):
+		"""collects data form the systems and returns it as dict"""
+
+		free_space = self.w.Win32_LogicalDisk()[0].FreeSpace
+		cpu_load = self.w.Win32_Processor()[0].LoadPercentage
+		data = {}
+		data['free_space'] = free_space
+		data['cpu_load'] = cpu_load
+
+		return data
 
 	def print_statistics(self):
 		"""requests the statistincs stored at the last send_data call
