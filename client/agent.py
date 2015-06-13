@@ -21,7 +21,7 @@ class Agent(object):
 		self.begining_date = datetime.now().strftime('%Y-%b-%d %I:%M:%S')
 
 		while(current_time<=time_period):
-			free_space = str(self.w.Win32_LogicalDisk()[0].FreeSpace)
+			free_space = self.w.Win32_LogicalDisk()[0].FreeSpace
 			cpu_load = self.w.Win32_Processor()[0].LoadPercentage
 
 			data['free_space'] = free_space
