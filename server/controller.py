@@ -11,12 +11,14 @@ class Controller(object):
 
 		self.channel = connection.channel()
 
-		self.channel.queue_declare(queue='data', durable=False)
-		self.channel.queue_declare(queue='request', durable=False)
+		self.channel.queue_declare(queue='data', durable=False, auto_delete=True)
+		self.channel.queue_declare(queue='request', durable=False, auto_delete=True)
 
 		self.dbmanager = db_manager()
 
 	def on_receive_data(self, ch, method, props, body):
+		"""process the data received and sends it further to the dbmanager
+			expects a json with the form ["agent_name", agent_data]"""
 		try:
 			message = json.loads(body)
 			agent_name = message[0]
@@ -27,6 +29,10 @@ class Controller(object):
 			print "received body is not a valid json"
 
 	def on_receive_request(self, ch, method, props, body):
+		"""process the body tries to decode a json in the form [agnet_name, begining_date]
+			if suceeds requests from the dbmanager the specfic entries based on this data
+			encodes the results into a json and sends it back to the agent that requested it"""
+
 		try:
 			message = json.loads(body)
 			agent_name = message[0]
@@ -47,6 +53,7 @@ class Controller(object):
 
 
 	def start(self):
+		"""starts the process of consuming the queues"""
 		self.channel.basic_consume(self.on_receive_data, queue='data')
 		self.channel.basic_consume(self.on_receive_request, queue='request')
 

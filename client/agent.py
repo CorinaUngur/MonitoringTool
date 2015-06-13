@@ -11,7 +11,11 @@ class Agent(object):
 		self.w = WMI()
 		self.connector = Connector()
 
-	def start_sending(self, time_period=600, time_interval = 10):
+	def send_data(self, time_period=600, time_interval = 10):
+		"""sends data for a time period specified by time_period
+			data is collected at a interval specified by time_interval
+			time_period, time_interval are integers that represent number of seconds"""
+
 		data = {}
 		current_time = 0
 		self.begining_date = datetime.now().strftime('%Y-%b-%d %I:%M:%S')
@@ -29,10 +33,17 @@ class Agent(object):
 			current_time += time_interval
 
 	def print_statistics(self):
+		"""requests the statistincs stored at the last send_data call
+			prints the data in a table like manner if possible"""
+
 		self.connector.request_data(self.name, self.begining_date)
 		message = self.connector.get_last_message()
 
-		print 'cpu_load\t\tfree_space'
-		for msg in message:
-			m = json.loads(msg)
-			print str(m['cpu_load'])+ '\t' + m['free_space']
+		try:
+			print 'cpu_load\tfree_space'
+			for m in message:
+				print str(m['cpu_load'])+ '\t\t' + m['free_space']
+		except Exception:
+			print message
+
+
