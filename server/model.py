@@ -9,7 +9,7 @@ Base = declarative_base()
 class db_manager(object):
 	def __init__(self):
 
-		engine = create_engine('sqlite:///:memory:', echo=True)
+		engine = create_engine('sqlite:///:memory:', echo=False)
 		Session = sessionmaker(bind=engine)
 		self.session = Session()
 		Base.metadata.create_all(engine)
